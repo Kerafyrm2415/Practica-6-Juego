@@ -4,6 +4,7 @@ import java.util.List;
 public class Jugador extends Entidad {
     private int dy = 0;
     private boolean izquierda = false, derecha = false, enSuelo = false;
+    private boolean dobleSalto = true;
 
     public Jugador(int x, int y, int ancho, int alto) {
         super(x, y, ancho, alto);
@@ -27,6 +28,19 @@ public class Jugador extends Entidad {
             if (e instanceof Enemigo && getRect().intersects(e.getRect())) {
                 x = 50; y = 500; dy = 0;
             }
+            if (e instanceof Limite && getRect().intersects(e.getRect())) {
+                // Si viene subiendo (dy negativo), lo detienes justo debajo del techo
+                if (dy < 0) {
+                    y = e.getRect().y + e.getRect().height;
+                    dy = 0;
+                }
+            }
+        }
+    }
+
+    public void reiniciarPosicion(boolean sePresionoTeclaR) {
+        if (sePresionoTeclaR) {
+            x = 50; y = 500; dy = 0;
         }
     }
 
@@ -37,6 +51,15 @@ public class Jugador extends Entidad {
 
     public void saltar() {
         if (enSuelo) dy = -15;
+        dobleSalto();
+        dobleSalto = true;
+    }
+
+    public void dobleSalto() {
+        if (dobleSalto = true) {
+            dy = -15;
+        }
+        dobleSalto = false;
     }
 
     public void setIzquierda(boolean b) { izquierda = b; }

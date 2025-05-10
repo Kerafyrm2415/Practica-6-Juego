@@ -9,6 +9,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Jugador jugador;
     private ArrayList<Entidad> entidades;
     private ArchivoJuego archivo;
+    private boolean teclaPresionada;
 
     public GamePanel() {
         setPreferredSize(new Dimension(800, 600));
@@ -22,6 +23,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         entidades.add(new Plataforma(0, 580, 800, 20));
         entidades.add(new Plataforma(200, 450, 120, 20));
+        entidades.add(new Limite(0, 0, 800, 20));
         entidades.add(new EnemigoTerrestre(300, 540, 40, 40));
         entidades.add(new EnemigoVolador(500, 300, 40, 40));
 
@@ -46,15 +48,27 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(true);
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(true);
+        if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(true);
+        if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(true);
         if (e.getKeyCode() == KeyEvent.VK_SPACE) jugador.saltar();
-        if (e.getKeyCode() == KeyEvent.VK_S) archivo.guardar(jugador);
+        if (e.getKeyCode() == KeyEvent.VK_P) {
+            archivo.guardar(jugador);
+        }
+        // Reiniciar posición del jugador usando la R suena como si se lo hubiera pedido a chat XDDDDDDDD
+        if (e.getKeyCode() == KeyEvent.VK_R && !teclaPresionada) {
+            jugador.reiniciarPosicion(true);
+            teclaPresionada = true;
+        }
     }
 
+
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(false);
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(false);
+        if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(false);
+        if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(false);
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            jugador.reiniciarPosicion(false);
+            teclaPresionada = false;
+        }
     }
 
     public void keyTyped(KeyEvent e) {}
