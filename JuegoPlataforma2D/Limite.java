@@ -6,7 +6,6 @@ public class Limite extends Entidad {
     }
 
     public void dibujar(Graphics g) {
-        g.setColor(Color.WHITE);
         g.fillRect(x, y, ancho, alto);
     }
 }

@@ -4,7 +4,8 @@ import java.util.List;
 public class Jugador extends Entidad {
     private int dy = 0;
     private boolean izquierda = false, derecha = false, enSuelo = false;
-    private boolean dobleSalto = true;
+    private boolean dobleSalto = true, puedeDobleSalto, sonidoReproducido = false;
+    private GameListener listener;
 
     public Jugador(int x, int y, int ancho, int alto) {
         super(x, y, ancho, alto);
@@ -24,6 +25,8 @@ public class Jugador extends Entidad {
                 y = e.getRect().y - alto;
                 dy = 0;
                 enSuelo = true;
+                puedeDobleSalto = true;
+                sonidoReproducido = false;
             }
             if (e instanceof Enemigo && getRect().intersects(e.getRect())) {
                 x = 50; y = 500; dy = 0;
@@ -35,7 +38,21 @@ public class Jugador extends Entidad {
                     dy = 0;
                 }
             }
+            if (e instanceof Meta && getRect().intersects(e.getRect())) {
+                if (!sonidoReproducido) {
+                    if (listener != null) listener.nivelCompletado(); // si usas listener
+                    sonidoReproducido = true;
+                }
+            }
         }
+    }
+
+    public void setListener(GameListener listener) {
+        this.listener = listener;
+    }
+
+    public interface GameListener {
+        void nivelCompletado();
     }
 
     public void reiniciarPosicion(boolean sePresionoTeclaR) {
@@ -50,17 +67,22 @@ public class Jugador extends Entidad {
     }
 
     public void saltar() {
-        if (enSuelo) dy = -15;
-        dobleSalto();
-        dobleSalto = true;
+        if (enSuelo) {
+            dy = -15;
+            puedeDobleSalto = true; // Se habilita el doble salto después de un salto normal
+        } else if (puedeDobleSalto) {
+            dy = -15;
+            puedeDobleSalto = false; // Ya no puede volver a hacer doble salto
+        }
     }
 
-    public void dobleSalto() {
-        if (dobleSalto = true) {
-            dy = -15;
-        }
-        dobleSalto = false;
-    }
+    //Saltos infinitos
+//    public void dobleSalto() {
+//        if (dobleSalto = true) {
+//            dy = -15;
+//        }
+//        dobleSalto = false;
+//    }
 
     public void setIzquierda(boolean b) { izquierda = b; }
     public void setDerecha(boolean b) { derecha = b; }
