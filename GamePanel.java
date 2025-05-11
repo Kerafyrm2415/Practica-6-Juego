@@ -20,29 +20,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         setBackground(Color.WHITE);
         setFocusable(true);
         addKeyListener(this);
-        // Fondo de la pantalla, ahorita es de balatro
-        fondoPantalla = new ImageIcon("balatreroBalatrez.png").getImage();
-        jugador = new Jugador(50, 500, 40, 40);
+
+        // Fondo de la pantalla
+        fondoPantalla = new ImageIcon("nivel1.jpg").getImage();
+        jugador = new Jugador(50, 500, 40, 60,"avatar.png");
+
         // Esto se lo pedi a chat para poder reproducir el sonido al tocar la meta, usa al jugador como un Listener y de ahi se reproduce el sonido
         jugador.setListener(new Jugador.GameListener() {
             @Override
             public void nivelCompletado() {
-                    reproducirSonidoMeta();
+                reproducirSonidoMeta();
+
+                // Elimina la meta del juego
+                entidades.removeIf(entidad -> entidad instanceof Meta);
+
+                // Detiene el juego
+                timer.stop();
+
+                // Mensaje de victoria
+                JOptionPane.showMessageDialog(null, "¡Nivel completado!");
+
             }
+
         });
         entidades = new ArrayList<>();
         archivo = new ArchivoJuego("progreso.txt");
 
-        entidades.add(new Plataforma(-40, 580, 860, 20));
-        entidades.add(new Plataforma(200, 450, 120, 20));
-        // esto es el techo
-        entidades.add(new Limite(0, -20, 800, 20));
-        entidades.add(new Limite(-20, 0, 20, 600));
-        entidades.add(new Limite(820, 0, 20, 600));
-        //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
-        entidades.add(new Meta(700, 400, 50, 50, "ohhbanana.png"));
-        entidades.add(new EnemigoTerrestre(300, 540, 40, 40));
-        entidades.add(new EnemigoVolador(500, 300, 40, 40));
+        inicializarNivel();
 
         archivo.cargar(jugador);
         //Musica de fondo, ahorita es el tema de balatro
@@ -50,7 +54,25 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         timer = new Timer(16, this);
         timer.start();
+    }
 
+    protected void inicializarNivel() {
+        //Suelo
+        entidades.add(new Plataforma(0, 580, 800, 20));
+        entidades.add(new Plataforma(200, 450, 120, 20));
+        entidades.add(new Plataforma(100, 300, 100, 20));
+        entidades.add(new Plataforma(250, 300, 100, 20));
+        entidades.add(new Plataforma(300, 100, 120, 20));
+        // esto es el techo
+        entidades.add(new Limite(0, -20, 800, 20));
+        //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
+        entidades.add(new Meta(700, 100, 50, 50, "ohhbanana.png"));
+        entidades.add(new EnemigoTerrestre(300, 540, 40, 40));
+        entidades.add(new EnemigoVolador(500, 300, 40, 40));
+    }
+
+    public void setFondo(String ruta) {
+        fondoPantalla = new ImageIcon(ruta).getImage();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -70,7 +92,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public void keyPressed(KeyEvent e) {
+
+        public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(true);
         if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(true);
         if (e.getKeyCode() == KeyEvent.VK_SPACE) jugador.saltar();
@@ -119,4 +142,3 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 }
-

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
@@ -6,14 +7,25 @@ public class Jugador extends Entidad {
     private boolean izquierda = false, derecha = false, enSuelo = false;
     private boolean dobleSalto = true, puedeDobleSalto, sonidoReproducido = false;
     private GameListener listener;
+    private Image imagen, imagenIzquierda, imagenDerecha, imagenSalto;
 
-    public Jugador(int x, int y, int ancho, int alto) {
+    public Jugador(int x, int y, int ancho, int alto, String rutaImagen) {
         super(x, y, ancho, alto);
+        imagen = new ImageIcon(rutaImagen).getImage();
+        imagenDerecha = new ImageIcon("avatar_derecha.png").getImage();
+        imagenIzquierda = new ImageIcon("avatar_izquierda.png").getImage();
+        imagenSalto = new ImageIcon("avatar.png").getImage();
     }
 
     public void actualizar() {
-        if (izquierda) x -= 4;
-        if (derecha) x += 4;
+        if (izquierda) {
+            x -= 4;
+            imagen = imagenIzquierda;
+        }
+        if (derecha) {
+            x += 4;
+            imagen = imagenDerecha;
+        }
         dy += 1;
         y += dy;
     }
@@ -32,17 +44,8 @@ public class Jugador extends Entidad {
                 x = 50; y = 500; dy = 0;
             }
             if (e instanceof Limite && getRect().intersects(e.getRect())) {
-                // Teletransporte horizontal
-                if (e.getRect().width <= 25 && e.getRect().height >= 600) { // pared delgada y alta
-                    if (e.getRect().x <= 0) {
-                        x = 780; // Aparece casi del lado derecho
-                    } else if (e.getRect().x >= 780) {
-                        x = 5;   // Aparece casi del lado izquierdo
-                    }
-                }
-
-                // Limite superior (techo)
-                if (e.getRect().height <= 25 && dy < 0) { // techo delgado
+                // Si viene subiendo (dy negativo), lo detienes justo debajo del techo
+                if (dy < 0) {
                     y = e.getRect().y + e.getRect().height;
                     dy = 0;
                 }
@@ -60,8 +63,10 @@ public class Jugador extends Entidad {
         this.listener = listener;
     }
 
-    public void setDy(int dy) {
-        this.dy = dy;
+    public void setPosicion(int nuevaX, int nuevaY) {
+        x = nuevaX;
+        y = nuevaY;
+        dy = 0;
     }
 
     public interface GameListener {
@@ -75,17 +80,18 @@ public class Jugador extends Entidad {
     }
 
     public void dibujar(Graphics g) {
-        g.setColor(Color.BLUE);
-        g.fillRect(x, y, ancho, alto);
+        g.drawImage(imagen, x, y, ancho, alto, null);
     }
 
     public void saltar() {
         if (enSuelo) {
             dy = -15;
             puedeDobleSalto = true; // Se habilita el doble salto después de un salto normal
+            imagen = imagenSalto;
         } else if (puedeDobleSalto) {
             dy = -15;
             puedeDobleSalto = false; // Ya no puede volver a hacer doble salto
+            imagen= imagenSalto;
         }
     }
 
