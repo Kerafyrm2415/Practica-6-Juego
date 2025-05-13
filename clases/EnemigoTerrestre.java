@@ -1,3 +1,4 @@
+package clases;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -34,6 +35,14 @@ public class EnemigoTerrestre extends Enemigo {
                 dx *= -1; // cambia dirección si toca algo que no es Plataforma
                 x += dx * 2; // lo mueve un poco en la nueva dirección para evitar "pegado"
             }
+            if (e instanceof EnemigoTerrestre) {
+                dx *= -1;
+                x += dx * 2;
+            }
+            if (e instanceof Limite) {
+                dx *= -1;
+                x += dx * 2;
+            }
         }
     }
 
@@ -56,5 +65,10 @@ public class EnemigoTerrestre extends Enemigo {
     public void setPosicion(int nuevaX, int nuevaY) {
         x = nuevaX;
         y = nuevaY;
+    }
+
+    public void setPosicionesOrignales(int xOriginal, int yOriginal) {
+        this.xOriginal = xOriginal;
+        this.yOriginal = yOriginal;
     }
 }

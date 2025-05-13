@@ -1,3 +1,4 @@
+package clases;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -6,23 +7,30 @@ public class Jugador extends Entidad {
     public interface GamePanelListener {
         void mostrarMensajeMuerte();
     }
-    private int dy = 0;
+    private int dy = 0, xOriginal, yOriginal;
     private boolean izquierda = false, derecha = false, enSuelo = false;
-    private boolean dobleSalto = true, puedeDobleSalto, sonidoReproducido = false;
+    private boolean puedeDobleSalto, sonidoReproducido = false;
     private GameListener listener;
     private GamePanelListener panelListener;
     private Image imagen, imagenIzquierda, imagenDerecha, imagenSalto, imagenIdle;
+    private Meta ultimaMetaTocada;
 
+    private GamePanel panel;
 
 
     public Jugador(int x, int y, int ancho, int alto, String rutaImagen) {
         super(x, y, ancho, alto);
+        this.xOriginal = x;
+        this.yOriginal = y;
         imagen = new ImageIcon(rutaImagen).getImage();
         imagenIdle = new ImageIcon("recursos/avatar.png").getImage();
         imagenDerecha = new ImageIcon("recursos/avatar_derecha.png").getImage();
         imagenIzquierda = new ImageIcon("recursos/avatar_izquierda.png").getImage();
         imagenSalto = new ImageIcon("recursos/avatar.png").getImage();
     }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
 
     public void actualizar() {
         if (izquierda) {
@@ -38,17 +46,19 @@ public class Jugador extends Entidad {
         }
         dy += 1;
         y += dy;
-
+        if (y > 800) { // Límite de caída
+            reiniciarPosicion();
+        }
     }
 
     public void resbalar(boolean hielo) {
         if(hielo==true) {
             if (izquierda) {
-                x -= 12;
+                x -= 9;
                 imagen = imagenIzquierda;
             }
             if (derecha) {
-                x += 12;
+                x += 9;
                 imagen = imagenDerecha;
             }
             if (izquierda == derecha) {
@@ -62,7 +72,7 @@ public class Jugador extends Entidad {
     public void verificarColisiones(List<Entidad> entidades) {
         enSuelo = false;
         for (Entidad e : entidades) {
-            if (e instanceof Plataforma && getRect().intersects(e.getRect())) {
+            if (e instanceof Plataforma plataforma && getRect().intersects(e.getRect())) {
                 Rectangle rJugador = getRect();
                 Rectangle rEntidad = e.getRect();
 
@@ -73,12 +83,13 @@ public class Jugador extends Entidad {
                     enSuelo = true;
                     puedeDobleSalto = true;
                     sonidoReproducido = false;
+                    if (plataforma.esMovil()) {
+                        x += plataforma.getDX(); // ¡solo si es móvil!
+                    }
                 }
             }
             if (e instanceof Enemigo && getRect().intersects(e.getRect())) {
-                x = 50;
-                y = 520;
-                dy = 0;
+                reiniciarPosicion();
                 if (panelListener != null) {
                     panelListener.mostrarMensajeMuerte();
                 }
@@ -99,9 +110,12 @@ public class Jugador extends Entidad {
                     dy = 0;
                 }
             }
-            if (e instanceof Meta && getRect().intersects(e.getRect())) {
-                if (!sonidoReproducido) {
-                    if (listener != null) listener.nivelCompletado(); // si usas listener
+            if (e instanceof Meta meta && getRect().intersects(e.getRect())) {
+                if (!sonidoReproducido && meta.esVisible()) {
+                    meta.tocarMeta(); // Oculta la meta
+                    meta.reproducirSonidoMeta();
+                    ultimaMetaTocada = meta; // Guardamos la última meta tocada
+                    if (listener != null) listener.nivelCompletado();
                     sonidoReproducido = true;
                 }
             }
@@ -118,21 +132,16 @@ public class Jugador extends Entidad {
         this.panelListener = listener;
     }
 
-    public void setPosicion(int nuevaX, int nuevaY) {
-        x = nuevaX;
-        y = nuevaY;
-        dy = 0;
-    }
-
     public interface GameListener {
         void nivelCompletado();
     }
 
 
-    public void reiniciarPosicion(boolean sePresionoTeclaR) {
-        if (sePresionoTeclaR) {
-            x = 50; y = 520; dy = 0;
-        }
+    public void reiniciarPosicion() {
+            x = xOriginal;
+            y = yOriginal - 20;
+            dy = 0;
+            enSuelo=true;
     }
 
     public void dibujar(Graphics g) {
@@ -155,7 +164,9 @@ public class Jugador extends Entidad {
             imagen = imagenSalto;
         }
     }
-
+    public Meta getUltimaMetaTocada() {
+        return ultimaMetaTocada;
+    }
 
 //    //Saltos infinitos
 //    public void dobleSalto() {
@@ -168,6 +179,5 @@ public class Jugador extends Entidad {
     public void setIzquierda(boolean b) { izquierda = b; }
     public void setDerecha(boolean b) { derecha = b; }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
+
 }

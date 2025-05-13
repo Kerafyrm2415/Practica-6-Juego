@@ -1,3 +1,4 @@
+package clases;
 import java.awt.*;
 import javax.swing.*;
 
@@ -62,4 +63,8 @@ public class EnemigoVolador extends Enemigo {
         y = nuevaY;
     }
 
+    public void setPosicionesOrignales(int xOriginal, int yOriginal) {
+        this.xOriginal = xOriginal;
+        this.yOriginal = yOriginal;
+    }
 }

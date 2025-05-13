@@ -1,3 +1,4 @@
+package clases;
 import java.awt.*;
 
 public abstract class Entidad {

@@ -1,3 +1,4 @@
+package clases;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,12 +15,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Image fondoPantalla;
     private Clip musica;
     private JLabel mensaje;
+    ImageIcon icono = new ImageIcon("recursos/ohhbanana.png");
+    JLabel conteoDeMetas = new JLabel(icono);
     private int nivelActual = 1;
     private Plataforma plataforma1,plataforma2,plataforma3,plataforma4,plataforma5, suelo;
     private Plataforma plataforma6, plataforma7, plataforma8, plataforma9, plataforma10;
     private EnemigoVolador enemigoVolador1, enemigoVolador2, enemigoVolador3, enemigoVolador4;
     private EnemigoTerrestre enemigoTerrestre1, enemigoTerrestre2, enemigoTerrestre3;
-    private Meta meta;
     private Champiñon champiñon1, champiñon2;
     private boolean hielo=false, fuego=false, juegoTerminado=false;
 
@@ -30,13 +32,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("recursos/nivel1.jpg").getImage();
-        jugador = new Jugador(400, 530, 40, 60, "recursos/avatar.png");
+        jugador = new Jugador(400, 540, 40, 60, "recursos/avatar.png");
+        Meta metaFinal = jugador.getUltimaMetaTocada();
 
         // Esto se lo pedi a chat para poder reproducir el sonido al tocar la meta, usa al jugador como un Listener y de ahi se reproduce el sonido
         jugador.setListener(new Jugador.GameListener() {
             @Override
             public void nivelCompletado() {
-                reproducirSonidoMeta();
+                if (contarMetasRestantes() == 0) {
+
+                    for (Entidad ent : entidades) {
+                        if (metaFinal != null) {
+                            metaFinal.redibujarMeta(); // Solo esta se redibuja
+                        }
+                        if (ent instanceof Meta meta) {
+                            meta.redibujarMeta();
+                        }
+                    }
 
                 // Detiene el juego
                 timer.stop();
@@ -49,36 +61,46 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 });
                 t.setRepeats(false);
                 t.start();
-                jugador.reiniciarPosicion(true);
+                jugador.reiniciarPosicion();
                 switch (nivelActual) {
                     case 1:
                         timer.stop();
-                        inicializarMensajes("¡Ganaste el nivel! Toca Nivel 2");
+                        inicializarMensajes("¡Ganaste el nivel!");
                         mensaje.setVisible(true);
-                        timer.start();
+                        t.start();
                         nivelActual = 2;
                         break;
                     case 2:
                         timer.stop();
-                        inicializarMensajes("¡Ganaste el nivel! Toca Nivel 3");
+                        inicializarMensajes("¡Ganaste el nivel!");
                         mensaje.setVisible(true);
-                        timer.start();
+                        t.start();
                         nivelActual = 3;
                         break;
                     case 3:
                         juegoTerminado = true; // Marcar que el juego terminó
+                        musica.stop();
                         inicializarMensajes("¡JUEGO TERMINADO!");
                         mensaje.setVisible(true);
                         timer.stop();
-                        musica.stop();
                         break;
                 }
                 cambiarNivel(nivelActual);
+            }
             }
         });
         jugador.setPanelListener(new Jugador.GamePanelListener() {
             @Override
             public void mostrarMensajeMuerte() {
+                for (Entidad ent : entidades) {
+                    if (metaFinal != null) {
+                        metaFinal.redibujarMeta(); // Solo esta se redibuja
+                    }
+                    if (ent instanceof Meta meta) {
+                        meta.redibujarMeta();
+                    }
+                }
+                conteoDeMetas.setText(" " + contarMetasRestantes());
                 inicializarMensajes("¡Has muerto!");
                 mensaje.setVisible(true);
                 // Pausa el juego y la música
@@ -104,6 +126,54 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 }
             }
         });
+        ImageIcon imagenBotonReiniciar = new ImageIcon("recursos/reiniciar.png"); // Cambia esto por la ruta de tu imagen
+        Image reiniciarEscalado = imagenBotonReiniciar.getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+        ImageIcon imagenReiniciarEscalado = new ImageIcon(reiniciarEscalado);
+        JButton botonReiniciar = new JButton(imagenReiniciarEscalado);
+        botonReiniciar.setContentAreaFilled(false);
+        botonReiniciar.setBorderPainted(false);
+        botonReiniciar.setFocusPainted(false);
+        botonReiniciar.setBounds(650, 10, 128, 128);
+
+        botonReiniciar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jugador.reiniciarPosicion();
+                for (Entidad ent : entidades) {
+                    if (metaFinal != null) {
+                        metaFinal.redibujarMeta(); // Solo esta se redibuja
+                    }
+                    if (ent instanceof Meta meta) {
+                        meta.redibujarMeta();
+                    }
+                }
+                for (Entidad ent : entidades) {
+                    if (ent instanceof EnemigoTerrestre enemigoT) {
+                        enemigoT.reiniciarPosicion(); // actualiza su movimiento
+                    }
+                    if (ent instanceof EnemigoVolador enemigoV) {
+                        enemigoV.reiniciarPosicion();
+                    }
+                }
+                conteoDeMetas.setText(" " + contarMetasRestantes());
+            }
+        });
+        add(botonReiniciar);
+        ImageIcon banana = new ImageIcon("recursos/ohhbanana.png");
+        Image imagenEscalada = banana.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        ImageIcon iconobanana = new ImageIcon(imagenEscalada);
+        conteoDeMetas = new JLabel("0", iconobanana, JLabel.LEFT);
+        conteoDeMetas.setFont(new Font("Arial", Font.BOLD, 18));
+        conteoDeMetas.setBounds(10, 10, 160, 40);
+        conteoDeMetas.setForeground(Color.WHITE);
+
+// Posicionar el texto al lado de la imagen
+        conteoDeMetas.setHorizontalTextPosition(SwingConstants.RIGHT);
+        conteoDeMetas.setVerticalTextPosition(SwingConstants.CENTER);
+
+        this.setLayout(null);
+        add(conteoDeMetas);
+
         entidades = new ArrayList<>();
         archivo = new ArchivoJuego("progreso.txt");
 
@@ -169,7 +239,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         entidades.add(champiñon2);
 
         //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
-        entidades.add(new Meta(375, 70, 50, 50, "recursos/ohhbanana.png"));
+        Meta meta1 = new Meta(375, 70, 50, 50, "recursos/ohhbanana.png");
+        Meta meta2 = new Meta(500, 500, 50, 50, "recursos/ohhbanana.png");
+        entidades.add(meta1);
+        entidades.add(meta2);
+
+        int metasTotales = 0;
+        for (Entidad ent : entidades) {
+            if (ent instanceof Meta) {
+                metasTotales++;
+            }
+        }
+
+        conteoDeMetas.setText("" + contarMetasRestantes());
 
         enemigoTerrestre1 = new EnemigoTerrestre(300, 540, 40, 40,"recursos/temmie.png");
         enemigoVolador1 = new EnemigoVolador(280, 300, 40, 40,"recursos/temmie.png");
@@ -183,8 +265,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         //enemigoTerrestre1.actualizar(95,705);
     }
 
+
     public void setFondo(String ruta) {
         fondoPantalla = new ImageIcon(ruta).getImage();
+        conteoDeMetas.setText(" " + contarMetasRestantes());
         repaint();
     }
 
@@ -209,13 +293,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 suelo.actualizarSuelo(nivel);
                 enemigoVolador1.actualizar(nivel);
                 enemigoVolador1.setPosicion(280,300);
+                enemigoVolador1.setPosicionesOrignales(280,300);
                 enemigoVolador2.actualizar(nivel);
                 enemigoVolador2.setPosicion(480,300);
+                enemigoVolador2.setPosicionesOrignales(480,300);
                 enemigoTerrestre1.actualizar(nivel);
                 enemigoTerrestre1.setPosicion(300,540);
                 champiñon1.setPosicion(30,520);
                 champiñon2.setPosicion(710,520);
-
+                conteoDeMetas.setText(" " + contarMetasRestantes());
                 repaint();
                 break;
             case 2:
@@ -246,11 +332,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 enemigoTerrestre1.actualizar(nivel);
                 enemigoVolador1.actualizar(nivel);
                 enemigoVolador1.setPosicion(180,300);
+                enemigoVolador1.setPosicionesOrignales(180,300);
                 enemigoVolador2.actualizar(nivel);
                 enemigoVolador2.setPosicion(580,300);
+                enemigoVolador2.setPosicionesOrignales(580,300);
                 champiñon2.setPosicion(800,600);
                 champiñon1.setPosicion(800,600);
-
+                conteoDeMetas.setText(" " + contarMetasRestantes());
                 repaint();
                 break;
             case 3:
@@ -280,7 +368,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 enemigoTerrestre1.actualizar(nivel);
                 enemigoVolador1.actualizar(nivel);
                 enemigoVolador2.actualizar(nivel);
-
+                conteoDeMetas.setText(" " + contarMetasRestantes());
                 repaint();
                 break;
             default:
@@ -288,17 +376,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-
-
-
-
-
-
-
-
-
+    public int contarMetasRestantes() {
+        int contador = 0;
+        for (Entidad e : entidades) {
+            if (e instanceof Meta meta && meta.esVisible()) {
+                contador++;
+            }
+        }
+        return contador;
+    }
 
     public void actionPerformed(ActionEvent e) {
+        conteoDeMetas.setText(" " + contarMetasRestantes());
         if (juegoTerminado==true) {
             return;
         }
@@ -318,16 +407,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             if (ent instanceof EnemigoVolador enemigoV) {
                 enemigoV.vueloVertical();
             }
+            if (ent instanceof Meta meta) {
+                meta.actualizar();
+            }
         }
 
         if(fuego==true){
             plataforma1.mover(50, 350); // rango corto
+            plataforma1.setMovil(true);
             plataforma3.mover(50, 350);
+            plataforma3.setMovil(true);
             plataforma2.mover(350, 650); // rango largo
+            plataforma2.setMovil(true);
             plataforma4.mover(350, 650);
+            plataforma4.setMovil(true);
+        } else {
+            plataforma1.setMovil(false);
+            plataforma2.setMovil(false);
+            plataforma3.setMovil(false);
+            plataforma4.setMovil(false);
         }
 
         repaint();
+        GamePanel.this.requestFocusInWindow();
     }
 
     public void paintComponent(Graphics g) {
@@ -356,11 +458,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
             cambiarNivel(nivelActual);
         }
-        // Reiniciar posición del jugador usando la R suena como si se lo hubiera pedido a chat XDDDDDDDD
-        if (e.getKeyCode() == KeyEvent.VK_R && !teclaPresionada) {
-            jugador.reiniciarPosicion(true);
-            teclaPresionada = true;
-        }
 
         if (juegoTerminado==true) {
             return;
@@ -370,10 +467,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(false);
         if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(false);
-        if (e.getKeyCode() == KeyEvent.VK_R) {
-            jugador.reiniciarPosicion(false);
-            teclaPresionada = false;
-        }
     }
 
     public void keyTyped(KeyEvent e) {
@@ -391,15 +484,4 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public void reproducirSonidoMeta() {
-        try {
-            File archivo = new File("recursos/ohhbanana.wav");
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(archivo);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

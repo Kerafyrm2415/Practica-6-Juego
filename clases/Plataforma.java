@@ -1,9 +1,11 @@
+package clases;
 import javax.swing.*;
 import java.awt.*;
 
 public class Plataforma extends Entidad {
     private Image imagen;
     private int dx=2, direccion=1;
+    protected boolean esMovil;
 
     public Plataforma(int x, int y, int ancho, int alto, String rutaImagen) {
             super(x, y, ancho, alto);
@@ -44,10 +46,22 @@ public class Plataforma extends Entidad {
     }
 
     public void mover(int limiteIzq, int limiteDer) {
+        //esPlataformaMovil=true;
         if (x + dx > limiteDer || x + dx < limiteIzq) {
             dx *= -1; // Cambia de dirección si se pasa del límite
         }
         x += dx;
     }
 
+    public void setMovil(boolean valor) {
+        esMovil = valor;
+    }
+
+    public boolean esMovil() {
+        return esMovil;
+    }
+
+    public int getDX() {
+        return dx;
+    }
 }

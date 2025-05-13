@@ -1,5 +1,7 @@
+package clases;
 import javax.swing.*;
 import java.awt.*;
+
 
 public class Champiñon extends Entidad {
     private Image imagen;
