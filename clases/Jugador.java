@@ -1,5 +1,3 @@
-package clases;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -20,10 +18,10 @@ public class Jugador extends Entidad {
     public Jugador(int x, int y, int ancho, int alto, String rutaImagen) {
         super(x, y, ancho, alto);
         imagen = new ImageIcon(rutaImagen).getImage();
-        imagenIdle = new ImageIcon("recursos/avatar2.png").getImage();
-        imagenDerecha = new ImageIcon("recursos/avatar2_derecha.png").getImage();
-        imagenIzquierda = new ImageIcon("recursos/avatar2_izquierda.png").getImage();
-        imagenSalto = new ImageIcon("recursos/avatar2.png").getImage();
+        imagenIdle = new ImageIcon("recursos/avatar.png").getImage();
+        imagenDerecha = new ImageIcon("recursos/avatar_derecha.png").getImage();
+        imagenIzquierda = new ImageIcon("recursos/avatar_izquierda.png").getImage();
+        imagenSalto = new ImageIcon("recursos/avatar.png").getImage();
     }
 
     public void actualizar() {
@@ -41,6 +39,24 @@ public class Jugador extends Entidad {
         dy += 1;
         y += dy;
 
+    }
+
+    public void resbalar(boolean hielo) {
+        if(hielo==true) {
+            if (izquierda) {
+                x -= 12;
+                imagen = imagenIzquierda;
+            }
+            if (derecha) {
+                x += 12;
+                imagen = imagenDerecha;
+            }
+            if (izquierda == derecha) {
+                imagen = imagenIdle;
+            }
+            dy += 1;
+            y += dy;
+        }
     }
 
     public void verificarColisiones(List<Entidad> entidades) {
@@ -71,9 +87,9 @@ public class Jugador extends Entidad {
                 // Teletransporte horizontal
                 if (e.getRect().width <= 25 && e.getRect().height >= 600) { // pared delgada y alta
                     if (e.getRect().x <= 0) {
-                        x = 780; // Aparece casi del lado derecho
+                        x = 680; // Aparece casi del lado derecho
                     } else if (e.getRect().x >= 780) {
-                        x = 5;   // Aparece casi del lado izquierdo
+                        x = 65;   // Aparece casi del lado izquierdo
                     }
                 }
 
@@ -90,7 +106,7 @@ public class Jugador extends Entidad {
                 }
             }
             if (e instanceof Champiñon && getRect().intersects(e.getRect())) {
-               saltar(true);
+                saltar(true);
             }
         }
     }
@@ -125,9 +141,9 @@ public class Jugador extends Entidad {
 
     public void saltar(boolean saltoChampiñon) {
         if (enSuelo) {
-                dy = -17;
-                puedeDobleSalto = true; // Se habilita el doble salto después de un salto normal
-                imagen = imagenSalto;
+            dy = -17;
+            puedeDobleSalto = true; // Se habilita el doble salto después de un salto normal
+            imagen = imagenSalto;
         } else if (puedeDobleSalto) {
             dy = -13;
             puedeDobleSalto = false; // Ya no puede volver a hacer doble salto

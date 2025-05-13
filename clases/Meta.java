@@ -1,5 +1,3 @@
-package clases;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,8 +13,6 @@ public class Meta extends Entidad {
     public boolean plataformaEsVisible() {
         return getEsVisible();
     }
-
-
 
     @Override
     public void dibujar(Graphics g) {

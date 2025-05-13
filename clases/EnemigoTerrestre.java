@@ -1,14 +1,14 @@
-package clases;
-
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
 public class EnemigoTerrestre extends Enemigo {
     private int dx = 2; // velocidad horizontal
-    private int limiteIzq = 5; // límite izquierdo del patrullaje
-    private int limiteDer = 500; // límite derecho del patrullaje
+    private int limiteIzq = 95; // límite izquierdo del patrullaje
+    private int limiteDer = 705; // límite derecho del patrullaje
     private int xOriginal = x;
     private int yOriginal = y;
+    private Image imagen;
 
     public void actualizar() {
         x += dx;
@@ -19,11 +19,13 @@ public class EnemigoTerrestre extends Enemigo {
     }
 
     public void reiniciarPosicion() {
-            x = xOriginal; y = yOriginal;
+        x = xOriginal;
+        y = yOriginal;
     }
 
-    public EnemigoTerrestre(int x, int y, int ancho, int alto) {
+    public EnemigoTerrestre(int x, int y, int ancho, int alto, String RutaImagen) {
         super(x, y, ancho, alto);
+        imagen = new ImageIcon(RutaImagen).getImage();
     }
 
     public void verificarColisiones(List<Entidad> entidades) {
@@ -36,7 +38,23 @@ public class EnemigoTerrestre extends Enemigo {
     }
 
     public void dibujar(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect(x, y, ancho, alto);
+        g.drawImage(imagen,x, y, ancho, alto,null);
+    }
+
+    public void actualizar(int nivel) {
+        if (nivel == 1) {
+            imagen = new ImageIcon("recursos/temmie.png").getImage();
+        }
+        else if (nivel == 2) {
+            imagen = new ImageIcon("recursos/temmie.png").getImage();
+        }
+        else if (nivel == 3) {
+            imagen = new ImageIcon("recursos/temmie.png").getImage();
+        }
+    }
+
+    public void setPosicion(int nuevaX, int nuevaY) {
+        x = nuevaX;
+        y = nuevaY;
     }
 }
