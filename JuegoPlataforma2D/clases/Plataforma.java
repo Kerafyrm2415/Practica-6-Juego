@@ -1,21 +1,45 @@
-package clases;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class Plataforma extends Entidad {
     private Image imagen;
+
     public Plataforma(int x, int y, int ancho, int alto, String rutaImagen) {
         super(x, y, ancho, alto);
         imagen = new ImageIcon(rutaImagen).getImage();
     }
 
     public void dibujar(Graphics g) {
-        if (imagen != null) {
-            g.drawImage(imagen, x, y, ancho, alto, null);
-        }else {
-            g.setColor(Color.DARK_GRAY);
-            g.fillRect(x, y, ancho, alto);
+        g.drawImage(imagen, x, y, ancho, alto, null);
+    }
+
+    public void actualizar(int nivel) {
+        if (nivel == 1) {
+            imagen = new ImageIcon("recursos/plataforma1.png").getImage();
         }
+        else if (nivel == 2) {
+            imagen = new ImageIcon("recursos/plataforma2.png").getImage();
+        }
+        else if (nivel == 3) {
+            imagen = new ImageIcon("recursos/plataforma3.png").getImage();
+        }
+    }
+
+    public void actualizarSuelo(int nivel) {
+        if (nivel == 1) {
+            imagen = new ImageIcon("recursos/suelo1.png").getImage();
+        }
+        else if (nivel == 2) {
+            imagen = new ImageIcon("recursos/suelo2.png").getImage();
+        }
+        else if (nivel == 3) {
+            imagen = new ImageIcon("recursos/suelo3.png").getImage();
+        }
+    }
+
+    public void setPosicion(int nuevaX, int nuevaY) {
+        x = nuevaX;
+        y = nuevaY;
+
     }
 }

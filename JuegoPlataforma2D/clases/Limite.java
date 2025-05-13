@@ -1,5 +1,3 @@
-package clases;
-
 import java.awt.*;
 
 public class Limite extends Entidad {

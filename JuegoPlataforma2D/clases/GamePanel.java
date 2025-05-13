@@ -1,5 +1,3 @@
-package clases;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,6 +15,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Clip musica;
     private JLabel mensaje;
     private int nivelActual = 1;
+    private Plataforma plataforma1,plataforma2,plataforma3,plataforma4,plataforma5, suelo;
+    private Plataforma plataforma6, plataforma7, plataforma8, plataforma9, plataforma10;
+    private EnemigoVolador enemigoVolador1, enemigoVolador2, enemigoVolador3, enemigoVolador4;
+    private EnemigoTerrestre enemigoTerrestre1, enemigoTerrestre2, enemigoTerrestre3;
+    private Meta meta;
 
     public GamePanel() {
         setPreferredSize(new Dimension(800, 600));
@@ -27,7 +30,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("recursos/nivel1.jpg").getImage();
-        jugador = new Jugador(50, 530, 40, 60, "recursos/avatar.png");
+        jugador = new Jugador(400, 530, 40, 60, "recursos/avatar.png");
         // Esto se lo pedi a chat para poder reproducir el sonido al tocar la meta, usa al jugador como un Listener y de ahi se reproduce el sonido
         jugador.setListener(new Jugador.GameListener() {
             @Override
@@ -35,7 +38,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 reproducirSonidoMeta();
                 // Elimina la meta del juego
                 // entidades.removeIf(entidad -> entidad instanceof Meta);
-
 
                 // Mensaje de victoria
                 inicializarMensajes("¡Ganaste el nivel!");
@@ -69,6 +71,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         jugador.setPanelListener(new Jugador.GamePanelListener() {
             @Override
             public void mostrarMensajeMuerte() {
+                inicializarMensajes("¡Has muerto!");
                 mensaje.setVisible(true);
                 // Pausa el juego y la música
                 timer.stop();
@@ -83,15 +86,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 });
                 t.setRepeats(false);
                 t.start();
+                for (Entidad ent : entidades) {
+                    if (ent instanceof EnemigoTerrestre enemigoT) {
+                        enemigoT.reiniciarPosicion(); // actualiza su movimiento
+                    }
+                    if (ent instanceof EnemigoVolador enemigoV) {
+                        enemigoV.reiniciarPosicion();
+                    }
+                }
             }
         });
         entidades = new ArrayList<>();
         archivo = new ArchivoJuego("progreso.txt");
 
         inicializarNivel();
-
         archivo.cargar(jugador);
-        //Musica de fondo, ahorita es el tema de balatro
+
+        //Musica de fondo
         reproducirMusica("recursos/musica.wav");
 
         timer = new Timer(16, this);
@@ -105,29 +116,55 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         else mensaje.setForeground(Color.BLACK);
         mensaje.setHorizontalAlignment(SwingConstants.CENTER);
         mensaje.setVisible(false);
-        this.setLayout(null); // Importante para posicionar con coordenadas
-        mensaje.setBounds(250, 20, 300, 50); // Posición en pantalla
+        this.setLayout(null); //Importante para posicionar con coordenadas
+        mensaje.setBounds(250, 20, 300, 50); //Posición en pantalla
         add(mensaje);
         return;
     }
 
     protected void inicializarNivel() {
         //Suelo
-        entidades.add(new Plataforma(0, 580, 800, 20, "recursos/plataforma2.png"));
-        entidades.add(new Plataforma(200, 450, 120, 30, "recursos/plataforma2.png"));
-        entidades.add(new Plataforma(100, 300, 100, 30, "recursos/plataforma2.png"));
-        entidades.add(new Plataforma(250, 300, 100, 30, "recursos/plataforma2.png"));
-        entidades.add(new Plataforma(300, 100, 120, 30, "recursos/plataforma2.png"));
+        suelo=new Plataforma(0, 580, 800, 20, "recursos/suelo1.png");
+
+        //Plataformas
+        plataforma1 = new Plataforma(450, 420, 100, 30, "recursos/plataforma1.png");
+        plataforma2 = new Plataforma(250, 420, 100, 30, "recursos/plataforma1.png");
+        plataforma3 = new Plataforma(150, 220, 100, 30, "recursos/plataforma1.png");
+        plataforma4 = new Plataforma(350, 100, 100, 30, "recursos/plataforma1.png");
+        plataforma5 = new Plataforma(550, 220, 100, 30, "recursos/plataforma1.png");
+
+        //Meter las plataformas en la entidad
+        entidades.add(plataforma1);
+        entidades.add(plataforma2);
+        entidades.add(plataforma3);
+        entidades.add(plataforma4);
+        entidades.add(plataforma5);
+        entidades.add(suelo);
+
         // esto es el techo
         entidades.add(new Limite(0, -20, 800, 20));
         entidades.add(new Limite(0, -20, 800, 20));
         entidades.add(new Limite(-20, 0, 20, 600));
         entidades.add(new Limite(820, 0, 20, 600));
-        //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
-        entidades.add(new Meta(700, 500, 50, 50, "recursos/ohhbanana.png"));
-        entidades.add(new EnemigoTerrestre(300, 540, 40, 40));
-        entidades.add(new EnemigoVolador(500, 300, 40, 40));
 
+        //Champiñon
+        entidades.add(new Champiñon(30, 520, 60, 70));
+        entidades.add(new Champiñon(710, 520, 60, 70));
+
+        //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
+        entidades.add(new Meta(375, 50, 50, 50, "recursos/ohhbanana.png"));
+        entidades.add(new EnemigoTerrestre(300, 540, 40, 40,"recursos/temmie.png"));
+        enemigoTerrestre1 = new EnemigoTerrestre(300, 540, 40, 40,"recursos/temmie.png");
+
+        enemigoVolador1 = new EnemigoVolador(280, 300, 40, 40,"recursos/temmie.png");
+        enemigoVolador2 = new EnemigoVolador(480, 300, 40, 40,"recursos/temmie.png");
+
+        entidades.add(enemigoVolador1);
+        entidades.add(enemigoVolador2);
+        entidades.add(enemigoTerrestre1);
+
+        //QUISERA MOVIMIENTOS PERSONALIZADOS
+        //enemigoTerrestre1.actualizar(95,705);
     }
 
     public void setFondo(String ruta) {
@@ -135,9 +172,88 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         repaint();
     }
 
+    protected void cambiarNivel(int nivel) {
+        switch (nivel) {
+            case 1:
+                setFondo("recursos/nivel1.jpg");
+                musica.stop();
+                reproducirMusica("recursos/musica.wav");
+                plataforma1.actualizar(nivel);
+                plataforma2.actualizar(nivel);
+                plataforma3.actualizar(nivel);
+                plataforma4.actualizar(nivel);
+                plataforma5.actualizar(nivel);
+                suelo.actualizarSuelo(nivel);
+                repaint();
+                break;
+            case 2:
+                //entidades.removeIf(entidad -> entidad instanceof Champiñon);
+
+                //enemigoTerrestre1.actualizar(10,790);
+
+                setFondo("recursos/nivel2.jpg");
+                musica.stop();
+                reproducirMusica("recursos/musica2.wav");
+                plataforma1.actualizar(nivel);
+                plataforma1.setPosicion(100,470);
+                plataforma2.actualizar(nivel);
+                plataforma2.setPosicion(200,370);
+                plataforma3.actualizar(nivel);
+                plataforma3.setPosicion(50,200);
+                plataforma4.actualizar(nivel);
+                plataforma4.setPosicion(250,200);
+                plataforma5.actualizar(nivel);
+                plataforma5.setPosicion(450,200);
+
+               // plataforma6 = new Plataforma(600, 470, 100, 30, "recursos/plataforma2.png");
+               // plataforma7 = new Plataforma(500, 370, 100, 30, "recursos/plataforma2.png");
+               // plataforma8 = new Plataforma(650, 200, 100, 30, "recursos/plataforma2.png");
+               // entidades.add(plataforma6);
+               // entidades.add(plataforma7);
+               // entidades.add(plataforma8);
+
+                //EN ESTA ZONA QUIERO QUE EL AVE VUELE HORIZONTAL PARA QUE ESTORBE EN LA PARTE DE ARRIBA
+                //enemigoVolador3 = new EnemigoVolador(200, 550, 40, 40,"recursos/temmie.png");
+                //entidades.add(enemigoVolador3);
+                //enemigoVolador3.vueloHorizontal();
+
+                suelo.actualizarSuelo(nivel);
+                repaint();
+                break;
+            case 3:
+                //entidades.removeIf(plataforma6 -> plataforma6 instanceof Plataforma);
+                //entidades.removeIf(plataforma7 -> plataforma7 instanceof Plataforma);
+                //entidades.removeIf(plataforma8 -> plataforma8 instanceof Plataforma);
+
+                setFondo("recursos/nivel3.png");
+                musica.stop();
+                reproducirMusica("recursos/balatroBalatrezEstaEscuchandoBalatro.wav");
+                plataforma1.actualizar(nivel);
+                plataforma2.actualizar(nivel);
+                plataforma3.actualizar(nivel);
+                plataforma4.actualizar(nivel);
+                plataforma5.actualizar(nivel);
+                suelo.actualizarSuelo(nivel);
+                repaint();
+                break;
+            default:
+                break;
+        }
+    }
+
+
     public void actionPerformed(ActionEvent e) {
         jugador.actualizar();
         jugador.verificarColisiones(entidades);
+
+        for (Entidad ent : entidades) {
+            if (ent instanceof EnemigoTerrestre enemigoT) {
+                enemigoT.actualizar(95,705); // actualiza su movimiento
+            }
+            if (ent instanceof EnemigoVolador enemigoV) {
+                enemigoV.vueloVertical();
+            }
+        }
         repaint();
     }
 
@@ -152,31 +268,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    protected void cambiarNivel(int nivel) {
-        switch (nivel) {
-            case 1:
-                setFondo("recursos/nivel1.jpg");
-                musica.stop();
-                reproducirMusica("recursos/musica.wav");
-                break;
-            case 2:
-                setFondo("recursos/nivel2.jpg");
-                musica.stop();
-                reproducirMusica("recursos/musica2.wav");
-                break;
-            case 3:
-                setFondo("recursos/nivel3.png");
-                musica.stop();
-                reproducirMusica("recursos/balatroBalatrezEstaEscuchandoBalatro.wav");
-                break;
-            default:
-                break;
-        }
-    }
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) jugador.setIzquierda(true);
         if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) jugador.setDerecha(true);
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) jugador.saltar();
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) jugador.saltar(false);
         if (e.getKeyCode() == KeyEvent.VK_P) {
             archivo.guardar(jugador);
         }
@@ -219,6 +314,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             e.printStackTrace();
         }
     }
+
     public void reproducirSonidoMeta() {
         try {
             File archivo = new File("recursos/ohhbanana.wav");
@@ -230,4 +326,5 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             e.printStackTrace();
         }
     }
+
 }

@@ -1,5 +1,3 @@
-package clases;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -71,9 +69,9 @@ public class Jugador extends Entidad {
                 // Teletransporte horizontal
                 if (e.getRect().width <= 25 && e.getRect().height >= 600) { // pared delgada y alta
                     if (e.getRect().x <= 0) {
-                        x = 780; // Aparece casi del lado derecho
+                        x = 680; // Aparece casi del lado derecho
                     } else if (e.getRect().x >= 780) {
-                        x = 5;   // Aparece casi del lado izquierdo
+                        x = 65;   // Aparece casi del lado izquierdo
                     }
                 }
 
@@ -88,6 +86,9 @@ public class Jugador extends Entidad {
                     if (listener != null) listener.nivelCompletado(); // si usas listener
                     sonidoReproducido = true;
                 }
+            }
+            if (e instanceof Champiñon && getRect().intersects(e.getRect())) {
+                saltar(true);
             }
         }
     }
@@ -120,7 +121,7 @@ public class Jugador extends Entidad {
         g.drawImage(imagen, x, y, ancho, alto, null);
     }
 
-    public void saltar() {
+    public void saltar(boolean saltoChampiñon) {
         if (enSuelo) {
             dy = -17;
             puedeDobleSalto = true; // Se habilita el doble salto después de un salto normal
@@ -130,7 +131,13 @@ public class Jugador extends Entidad {
             puedeDobleSalto = false; // Ya no puede volver a hacer doble salto
             imagen = imagenSalto;
         }
+        if (saltoChampiñon) {
+            dy = -25;
+            puedeDobleSalto = true;
+            imagen = imagenSalto;
+        }
     }
+
 
 //    //Saltos infinitos
 //    public void dobleSalto() {

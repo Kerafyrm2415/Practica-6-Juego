@@ -1,5 +1,3 @@
-package clases;
-
 import java.io.*;
 
 public class ArchivoJuego {

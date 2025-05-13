@@ -1,13 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Meta extends Entidad {
+public class Champiñon extends Entidad {
     private Image imagen;
     boolean esInvisible;
 
-    public Meta(int x, int y, int ancho, int alto, String rutaImagen) {
+    public Champiñon(int x, int y, int ancho, int alto) {
         super(x, y, ancho, alto);
-        imagen = new ImageIcon(rutaImagen).getImage();
+        imagen = new ImageIcon("recursos/champiñon.png").getImage();
     }
 
     public boolean plataformaEsVisible() {
@@ -17,5 +17,10 @@ public class Meta extends Entidad {
     @Override
     public void dibujar(Graphics g) {
         g.drawImage(imagen, x, y, ancho, alto, null);
+    }
+
+    public void setPosicion(int nuevaX, int nuevaY) {
+        x = nuevaX;
+        y = nuevaY;
     }
 }
