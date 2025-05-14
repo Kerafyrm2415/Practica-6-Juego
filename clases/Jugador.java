@@ -1,4 +1,3 @@
-package clases;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -138,10 +137,10 @@ public class Jugador extends Entidad {
 
 
     public void reiniciarPosicion() {
-            x = xOriginal;
-            y = yOriginal - 20;
-            dy = 0;
-            enSuelo=true;
+        x = xOriginal;
+        y = yOriginal - 20;
+        dy = 0;
+        enSuelo=true;
     }
 
     public void dibujar(Graphics g) {
@@ -178,6 +177,5 @@ public class Jugador extends Entidad {
 
     public void setIzquierda(boolean b) { izquierda = b; }
     public void setDerecha(boolean b) { derecha = b; }
-
 
 }

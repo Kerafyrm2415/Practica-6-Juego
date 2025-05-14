@@ -1,4 +1,3 @@
-package clases;
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,12 +7,12 @@ public class Plataforma extends Entidad {
     protected boolean esMovil;
 
     public Plataforma(int x, int y, int ancho, int alto, String rutaImagen) {
-            super(x, y, ancho, alto);
-            imagen = new ImageIcon(rutaImagen).getImage();
+        super(x, y, ancho, alto);
+        imagen = new ImageIcon(rutaImagen).getImage();
     }
 
     public void dibujar(Graphics g){
-            g.drawImage(imagen, x, y, ancho, alto, null);
+        g.drawImage(imagen, x, y, ancho, alto, null);
     }
 
     public void actualizar(int nivel) {

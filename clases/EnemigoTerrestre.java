@@ -1,4 +1,3 @@
-package clases;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -9,13 +8,19 @@ public class EnemigoTerrestre extends Enemigo {
     private int limiteDer = 705; // límite derecho del patrullaje
     private int xOriginal = x;
     private int yOriginal = y;
-    private Image imagen;
+    private Image imagen, imagen_derecha, imagen_izquierda;
 
     public void actualizar() {
         x += dx;
 
         if (x <= limiteIzq || x + ancho >= limiteDer) {
             dx *= -1; // cambia de dirección
+        }
+
+        if (dx > 0) {
+            imagen = imagen_derecha;
+        } else {
+            imagen = imagen_izquierda;
         }
     }
 
@@ -24,9 +29,11 @@ public class EnemigoTerrestre extends Enemigo {
         y = yOriginal;
     }
 
-    public EnemigoTerrestre(int x, int y, int ancho, int alto, String RutaImagen) {
+    public EnemigoTerrestre(int x, int y, int ancho, int alto) {
         super(x, y, ancho, alto);
-        imagen = new ImageIcon(RutaImagen).getImage();
+        imagen = imagen_derecha;
+        imagen_izquierda = new ImageIcon("recursos/goma_izquierda.png").getImage();
+        imagen_derecha = new ImageIcon("recursos/goma_derecha.png").getImage();
     }
 
     public void verificarColisiones(List<Entidad> entidades) {
@@ -50,15 +57,18 @@ public class EnemigoTerrestre extends Enemigo {
         g.drawImage(imagen,x, y, ancho, alto,null);
     }
 
-    public void actualizar(int nivel) {
+    public void actualizarNivel(int nivel) {
         if (nivel == 1) {
-            imagen = new ImageIcon("recursos/temmie.png").getImage();
+            imagen_derecha = new ImageIcon("recursos/goma_derecha.png").getImage();
+            imagen_izquierda = new ImageIcon("recursos/goma_izquierda.png").getImage();
         }
         else if (nivel == 2) {
-            imagen = new ImageIcon("recursos/temmie.png").getImage();
+            imagen_derecha = new ImageIcon("recursos/oso_derecha.png").getImage();
+            imagen_izquierda = new ImageIcon("recursos/oso_izquierda.png").getImage();
         }
         else if (nivel == 3) {
-            imagen = new ImageIcon("recursos/temmie.png").getImage();
+            imagen_derecha = new ImageIcon("recursos/lava_derecha.png").getImage();
+            imagen_izquierda = new ImageIcon("recursos/lava_izquierda.png").getImage();
         }
     }
 

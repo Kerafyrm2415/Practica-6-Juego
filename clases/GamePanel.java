@@ -1,4 +1,3 @@
-package clases;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -50,43 +49,43 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         }
                     }
 
-                // Detiene el juego
-                timer.stop();
-                // Después de 2 segundos, oculta el mensaje y reanuda
-                Timer t = new Timer(2000, e -> {
-                    mensaje.setVisible(false);
-                    musica.start();
-                    timer.start();
-                    musica.loop(Clip.LOOP_CONTINUOUSLY);
-                });
-                t.setRepeats(false);
-                t.start();
-                jugador.reiniciarPosicion();
-                switch (nivelActual) {
-                    case 1:
-                        timer.stop();
-                        inicializarMensajes("¡Ganaste el nivel!");
-                        mensaje.setVisible(true);
-                        t.start();
-                        nivelActual = 2;
-                        break;
-                    case 2:
-                        timer.stop();
-                        inicializarMensajes("¡Ganaste el nivel!");
-                        mensaje.setVisible(true);
-                        t.start();
-                        nivelActual = 3;
-                        break;
-                    case 3:
-                        juegoTerminado = true; // Marcar que el juego terminó
-                        musica.stop();
-                        inicializarMensajes("¡JUEGO TERMINADO!");
-                        mensaje.setVisible(true);
-                        timer.stop();
-                        break;
+                    // Detiene el juego
+                    timer.stop();
+                    // Después de 2 segundos, oculta el mensaje y reanuda
+                    Timer t = new Timer(2000, e -> {
+                        mensaje.setVisible(false);
+                        musica.start();
+                        timer.start();
+                        musica.loop(Clip.LOOP_CONTINUOUSLY);
+                    });
+                    t.setRepeats(false);
+                    t.start();
+                    jugador.reiniciarPosicion();
+                    switch (nivelActual) {
+                        case 1:
+                            timer.stop();
+                            inicializarMensajes("¡Ganaste el nivel!");
+                            mensaje.setVisible(true);
+                            t.start();
+                            nivelActual = 2;
+                            break;
+                        case 2:
+                            timer.stop();
+                            inicializarMensajes("¡Ganaste el nivel!");
+                            mensaje.setVisible(true);
+                            t.start();
+                            nivelActual = 3;
+                            break;
+                        case 3:
+                            juegoTerminado = true; // Marcar que el juego terminó
+                            musica.stop();
+                            inicializarMensajes("¡JUEGO TERMINADO!");
+                            mensaje.setVisible(true);
+                            timer.stop();
+                            break;
+                    }
+                    cambiarNivel(nivelActual);
                 }
-                cambiarNivel(nivelActual);
-            }
             }
         });
         jugador.setPanelListener(new Jugador.GamePanelListener() {
@@ -127,13 +126,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         });
         ImageIcon imagenBotonReiniciar = new ImageIcon("recursos/reiniciar.png"); // Cambia esto por la ruta de tu imagen
-        Image reiniciarEscalado = imagenBotonReiniciar.getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+        Image reiniciarEscalado = imagenBotonReiniciar.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
         ImageIcon imagenReiniciarEscalado = new ImageIcon(reiniciarEscalado);
         JButton botonReiniciar = new JButton(imagenReiniciarEscalado);
         botonReiniciar.setContentAreaFilled(false);
         botonReiniciar.setBorderPainted(false);
         botonReiniciar.setFocusPainted(false);
-        botonReiniciar.setBounds(650, 10, 128, 128);
+        botonReiniciar.setBounds(700, 10, 64, 64);
 
         botonReiniciar.addActionListener(new ActionListener() {
             @Override
@@ -253,9 +252,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         conteoDeMetas.setText("" + contarMetasRestantes());
 
-        enemigoTerrestre1 = new EnemigoTerrestre(300, 540, 40, 40,"recursos/temmie.png");
-        enemigoVolador1 = new EnemigoVolador(280, 300, 40, 40,"recursos/temmie.png");
-        enemigoVolador2 = new EnemigoVolador(480, 300, 40, 40,"recursos/temmie.png");
+        enemigoTerrestre1 = new EnemigoTerrestre(300, 540, 40, 40);
+        enemigoVolador1 = new EnemigoVolador(280, 300, 40, 40,"recursos/vampiro_derecha.png");
+        enemigoVolador2 = new EnemigoVolador(480, 300, 40, 40,"recursos/vampiro_izquierda.png");
 
         entidades.add(enemigoVolador1);
         entidades.add(enemigoVolador2);
@@ -291,13 +290,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 plataforma5.actualizar(nivel);
                 plataforma5.setPosicion(550,220);
                 suelo.actualizarSuelo(nivel);
-                enemigoVolador1.actualizar(nivel);
+                enemigoVolador1.actualizar(nivel,"recursos/vampiro_derecha.png");
                 enemigoVolador1.setPosicion(280,300);
                 enemigoVolador1.setPosicionesOrignales(280,300);
-                enemigoVolador2.actualizar(nivel);
+                enemigoVolador2.actualizar(nivel,"recursos/vampiro_izquierda.png");
                 enemigoVolador2.setPosicion(480,300);
                 enemigoVolador2.setPosicionesOrignales(480,300);
-                enemigoTerrestre1.actualizar(nivel);
+                enemigoTerrestre1.actualizarNivel(nivel);
                 enemigoTerrestre1.setPosicion(300,540);
                 champiñon1.setPosicion(30,520);
                 champiñon2.setPosicion(710,520);
@@ -329,11 +328,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 plataforma8.actualizar(nivel);
                 plataforma8.setPosicion(650,200);
                 suelo.actualizarSuelo(nivel);
-                enemigoTerrestre1.actualizar(nivel);
-                enemigoVolador1.actualizar(nivel);
+                enemigoTerrestre1.actualizarNivel(nivel);
+                enemigoVolador1.actualizar(nivel,"recursos/hada_derecha.png");
                 enemigoVolador1.setPosicion(180,300);
                 enemigoVolador1.setPosicionesOrignales(180,300);
-                enemigoVolador2.actualizar(nivel);
+                enemigoVolador2.actualizar(nivel,"recursos/hada_izquierda.png");
                 enemigoVolador2.setPosicion(580,300);
                 enemigoVolador2.setPosicionesOrignales(580,300);
                 champiñon2.setPosicion(800,600);
@@ -365,9 +364,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 plataforma8.actualizar(nivel);
                 plataforma8.setPosicion(800,600);
                 suelo.actualizarSuelo(nivel);
-                enemigoTerrestre1.actualizar(nivel);
-                enemigoVolador1.actualizar(nivel);
-                enemigoVolador2.actualizar(nivel);
+                enemigoTerrestre1.actualizarNivel(nivel);
+                enemigoVolador1.actualizar(nivel,"recursos/flama_derecha.png");
+                enemigoVolador2.actualizar(nivel,"recursos/flama_izquierda.png");
                 conteoDeMetas.setText(" " + contarMetasRestantes());
                 repaint();
                 break;
@@ -393,7 +392,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         if(hielo==true){
-           jugador.resbalar(hielo);
+            jugador.resbalar(hielo);
         }
         else{
             jugador.actualizar();

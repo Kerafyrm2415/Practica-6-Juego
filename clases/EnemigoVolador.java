@@ -1,13 +1,10 @@
-package clases;
 import java.awt.*;
 import javax.swing.*;
 
 public class EnemigoVolador extends Enemigo {
-    private int dy = 2, dx=2; // velocidad vertical
+    private int dy = 2; // velocidad vertical
     private int limiteArriba = 100; // límite superior del movimiento
     private int limiteAbajo = 300; // límite inferior del movimiento
-    private int limiteIzq = 5; // límite izquierdo del patrullaje
-    private int limiteDer = 600;
     private int xOriginal = x;
     private int yOriginal = y;
     private Image imagen;
@@ -30,14 +27,6 @@ public class EnemigoVolador extends Enemigo {
         }
     }
 
-    public void vueloHorizontal() {
-        x += dx;
-
-        if (x <= limiteIzq || x + ancho >= limiteDer) {
-            dx *= -1; // cambia de dirección
-        }
-    }
-
     public void reiniciarPosicion() {
         x = xOriginal; y = yOriginal;
     }
@@ -46,15 +35,15 @@ public class EnemigoVolador extends Enemigo {
         g.drawImage(imagen,x, y, ancho, alto,null);
     }
 
-    public void actualizar(int nivel) {
+    public void actualizar(int nivel, String RutaImagen) {
         if (nivel == 1) {
-            imagen = new ImageIcon("recursos/temmie.png").getImage();
+            imagen = new ImageIcon(RutaImagen).getImage();
         }
         else if (nivel == 2) {
-            imagen = new ImageIcon("recursos/temmie.png").getImage();
+            imagen = new ImageIcon(RutaImagen).getImage();
         }
         else if (nivel == 3) {
-            imagen = new ImageIcon("recursos/temmie.png").getImage();
+            imagen = new ImageIcon(RutaImagen).getImage();
         }
     }
 
