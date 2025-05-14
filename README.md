@@ -11,13 +11,13 @@ contexto práctico para aprender sobre la detección de colisiones, la renderiza
 clase Graphics, y el uso de archivos para guardar y cargar el estado del juego, como
 puntuación, nivel alcanzado o personajes desbloqueados.
 En esta práctica, el estudiante creará un juego de plataforma 2D con temática libre, que
-incluya al menos:
-▪ Un personaje controlado por el usuario.
-▪ Múltiples tipos de enemigos u obstáculos, usando herencia.
-▪ Elementos interactivos como monedas o ítems recolectables.
-▪ Detección de colisiones entre elementos.
-▪ Interfaz gráfica básica renderizada con Graphics.
-▪ Mecanismo de guardado/carga de progreso a un archivo.
+incluya al menos:  
+▪ Un personaje controlado por el usuario.  
+▪ Múltiples tipos de enemigos u obstáculos, usando herencia.  
+▪ Elementos interactivos como monedas o ítems recolectables.  
+▪ Detección de colisiones entre elementos.  
+▪ Interfaz gráfica básica renderizada con Graphics.  
+▪ Mecanismo de guardado/carga de progreso a un archivo.  
 El propósito es aplicar la herencia para modelar personajes u objetos del juego, usar la clase
 Graphics para renderizar elementos en pantalla, implementar detección de colisiones e
 incorporar persistencia de datos mediante archivos (FileWriter, FileReader, BufferedReader,
