@@ -1,3 +1,5 @@
+package clases;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -61,5 +63,10 @@ public class Meta extends Entidad {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void setPosicion(int nuevaX, int nuevaY) {
+        x = nuevaX;
+        y = nuevaY;
+        baseY = nuevaY;
     }
 }

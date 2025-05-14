@@ -1,3 +1,5 @@
+package clases;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -45,7 +47,7 @@ public class Jugador extends Entidad {
         }
         dy += 1;
         y += dy;
-        if (y > 800) { // Límite de caída
+        if (y > 800) {
             reiniciarPosicion();
         }
     }
@@ -138,9 +140,15 @@ public class Jugador extends Entidad {
 
     public void reiniciarPosicion() {
         x = xOriginal;
-        y = yOriginal - 20;
+        y = (yOriginal-40);
         dy = 0;
         enSuelo=true;
+    }
+    public void setPosicion(int nuevaX, int nuevaY) {
+        x = nuevaX;
+        y = nuevaY;
+        xOriginal = nuevaX;
+        y = nuevaY;
     }
 
     public void dibujar(Graphics g) {
@@ -166,14 +174,6 @@ public class Jugador extends Entidad {
     public Meta getUltimaMetaTocada() {
         return ultimaMetaTocada;
     }
-
-//    //Saltos infinitos
-//    public void dobleSalto() {
-//        if (puedeDobleSalto = true) {
-//            dy = -15;
-//        }
-//        //puedeDobleSalto = false;
-//    }
 
     public void setIzquierda(boolean b) { izquierda = b; }
     public void setDerecha(boolean b) { derecha = b; }

@@ -1,3 +1,5 @@
+package clases;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,9 +20,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     JLabel conteoDeMetas = new JLabel(icono);
     private int nivelActual = 1;
     private Plataforma plataforma1,plataforma2,plataforma3,plataforma4,plataforma5, suelo;
-    private Plataforma plataforma6, plataforma7, plataforma8, plataforma9, plataforma10;
-    private EnemigoVolador enemigoVolador1, enemigoVolador2, enemigoVolador3, enemigoVolador4;
-    private EnemigoTerrestre enemigoTerrestre1, enemigoTerrestre2, enemigoTerrestre3;
+    private Plataforma plataforma6, plataforma7, plataforma8, plataforma9;
+    private EnemigoVolador enemigoVolador1, enemigoVolador2;
+    private Meta meta1, meta2, meta3;
+    private EnemigoTerrestre enemigoTerrestre1;
     private Champiñon champiñon1, champiñon2;
     private boolean hielo=false, fuego=false, juegoTerminado=false;
 
@@ -31,7 +34,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("recursos/nivel1.jpg").getImage();
-        jugador = new Jugador(400, 540, 40, 60, "recursos/avatar.png");
+        jugador = new Jugador(35, 550, 40, 60, "recursos/avatar.png");
         Meta metaFinal = jugador.getUltimaMetaTocada();
 
         // Esto se lo pedi a chat para poder reproducir el sonido al tocar la meta, usa al jugador como un Listener y de ahi se reproduce el sonido
@@ -212,17 +215,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         plataforma6 = new Plataforma(800, 600, 100, 30, "recursos/plataforma2.png");
         plataforma7 = new Plataforma(800, 600, 100, 30, "recursos/plataforma2.png");
         plataforma8 = new Plataforma(800, 600, 100, 30, "recursos/plataforma2.png");
-
-        entidades.add(plataforma6);
-        entidades.add(plataforma7);
-        entidades.add(plataforma8);
-
+        plataforma9 = new Plataforma(800, 600, 100, 30, "recursos/plataforma1.png");
+        //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
+        meta1 = new Meta(375, 70, 50, 50, "recursos/ohhbanana.png");
+        meta2 = new Meta(35, 50, 50, 50, "recursos/ohhbanana.png");
+        meta3 = new Meta(710, 200, 50, 50, "recursos/ohhbanana.png");
         //Meter las plataformas en la entidad
         entidades.add(plataforma1);
         entidades.add(plataforma2);
         entidades.add(plataforma3);
         entidades.add(plataforma4);
         entidades.add(plataforma5);
+        entidades.add(plataforma6);
+        entidades.add(plataforma7);
+        entidades.add(plataforma8);
+        entidades.add(plataforma9);
         entidades.add(suelo);
 
         // esto es el techo
@@ -236,12 +243,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         champiñon2 = new Champiñon(710, 520, 60, 70);
         entidades.add(champiñon1);
         entidades.add(champiñon2);
-
-        //esto es la meta, podemos cambiar la imagen con rutaImagen, pero tambien debes cambiarle el tipo de archivo si es .png o .jpg
-        Meta meta1 = new Meta(375, 70, 50, 50, "recursos/ohhbanana.png");
-        Meta meta2 = new Meta(500, 500, 50, 50, "recursos/ohhbanana.png");
         entidades.add(meta1);
         entidades.add(meta2);
+        entidades.add(meta3);
 
         int metasTotales = 0;
         for (Entidad ent : entidades) {
@@ -289,6 +293,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 plataforma4.setPosicion(350,120);
                 plataforma5.actualizar(nivel);
                 plataforma5.setPosicion(550,220);
+                plataforma9.actualizar(nivel);
+                plataforma9.setPosicion(800, 600);
                 suelo.actualizarSuelo(nivel);
                 enemigoVolador1.actualizar(nivel,"recursos/vampiro_derecha.png");
                 enemigoVolador1.setPosicion(280,300);
@@ -300,6 +306,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 enemigoTerrestre1.setPosicion(300,540);
                 champiñon1.setPosicion(30,520);
                 champiñon2.setPosicion(710,520);
+                meta2.setPosicion(35, 200);
+                meta3.setPosicion(710, 200);
+
                 conteoDeMetas.setText(" " + contarMetasRestantes());
                 repaint();
                 break;
@@ -311,6 +320,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 reproducirMusica("recursos/musica2.wav");
 
                 hielo= true;
+                jugador.setPosicion(360,410);
                 plataforma1.actualizar(nivel);
                 plataforma1.setPosicion(100,470);
                 plataforma2.actualizar(nivel);
@@ -327,6 +337,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 plataforma7.setPosicion(500,370);
                 plataforma8.actualizar(nivel);
                 plataforma8.setPosicion(650,200);
+                plataforma9.actualizar(nivel);
+                plataforma9.setPosicion(350, 470);
                 suelo.actualizarSuelo(nivel);
                 enemigoTerrestre1.actualizarNivel(nivel);
                 enemigoVolador1.actualizar(nivel,"recursos/hada_derecha.png");
@@ -337,6 +349,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 enemigoVolador2.setPosicionesOrignales(580,300);
                 champiñon2.setPosicion(800,600);
                 champiñon1.setPosicion(800,600);
+                meta2.setPosicion(35, 250);
+                meta3.setPosicion(710, 250);
                 conteoDeMetas.setText(" " + contarMetasRestantes());
                 repaint();
                 break;
@@ -347,6 +361,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
                 hielo=false;
                 fuego=true;
+                jugador.setPosicion(35,490);
                 plataforma1.actualizar(nivel);
                 plataforma1.setPosicion(350,450);
                 plataforma2.actualizar(nivel);
@@ -363,6 +378,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 plataforma7.setPosicion(800,600);
                 plataforma8.actualizar(nivel);
                 plataforma8.setPosicion(800,600);
+                plataforma9.setPosicion(800,600);
+                meta2.setPosicion(35, 200);
+                meta3.setPosicion(710,200);
+
                 suelo.actualizarSuelo(nivel);
                 enemigoTerrestre1.actualizarNivel(nivel);
                 enemigoVolador1.actualizar(nivel,"recursos/flama_derecha.png");
@@ -448,14 +467,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) jugador.saltar(false);
         if (e.getKeyCode() == KeyEvent.VK_P) {
             archivo.guardar(jugador);
-        }
-        // Metodo rapido para pasar de un nivel a otro
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            nivelActual++;
-            if (nivelActual > 3) {
-                nivelActual = 1;
-            }
-            cambiarNivel(nivelActual);
         }
 
         if (juegoTerminado==true) {

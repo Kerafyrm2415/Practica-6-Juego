@@ -1,3 +1,5 @@
+package clases;
+
 import java.awt.*;
 import javax.swing.*;
 
